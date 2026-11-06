@@ -127,7 +127,8 @@ the release step. PR runs cannot publish. No publishing PAT is needed.
 The first package may need its visibility changed to public in package settings.
 
 Dependabot checks application and release-tool npm dependencies and Actions
-weekly. Patch/Minor updates may auto-merge; Major and unknown classifications
+weekly. Application dependency updates use `fix` commit titles to trigger a
+Patch release after merging. Patch/Minor updates may auto-merge; Major and unknown classifications
 remain manual. Repository auto-merge is enabled, but protect `main` with the
 required `test` CI check before using the auto-merge workflow. It fails closed
 without that check. The privileged metadata workflow never checks out PR code.
