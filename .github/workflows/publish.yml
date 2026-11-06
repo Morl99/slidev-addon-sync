@@ -1,0 +1,100 @@
+name: Publish npm package
+
+on:
+  release:
+    types: [published]
+  pull_request:
+    paths:
+      - '.github/workflows/publish.yml'
+      - 'package.json'
+      - 'pnpm-lock.yaml'
+      - 'components/**'
+      - 'services/**'
+      - 'types/**'
+      - 'custom-nav-controls.vue'
+
+permissions: {}
+concurrency:
+  group: npm-publish-${{ github.event.release.tag_name || github.ref }}
+  cancel-in-progress: false
+
+jobs:
+  package:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    permissions:
+      contents: read
+    outputs:
+      checksum: ${{ steps.pack.outputs.checksum }}
+    steps:
+      - uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6
+        with:
+          ref: ${{ github.event.release.tag_name || github.ref }}
+          fetch-depth: 0
+          persist-credentials: false
+      - name: Validate release
+        if: github.event_name == 'release'
+        env:
+          RELEASE_TAG: ${{ github.event.release.tag_name }}
+        run: |
+          set -euo pipefail
+          git merge-base --is-ancestor HEAD origin/main
+          node --input-type=module <<'JS'
+          import assert from 'node:assert/strict';
+          import fs from 'node:fs';
+          const pkg = JSON.parse(fs.readFileSync('package.json'));
+          assert.equal(process.env.RELEASE_TAG, `v${pkg.version}`);
+          assert.match(pkg.version, /^\d+\.\d+\.\d+$/);
+          JS
+      - uses: pnpm/action-setup@f40ffcd9367d9f12939873eb1018b921a783ffaa # v4
+      - uses: actions/setup-node@249970729cb0ef3589644e2896645e5dc5ba9c38 # v6
+        with:
+          node-version-file: .node-version
+          cache: pnpm
+      - run: pnpm i --frozen-lockfile
+      - run: pnpm test
+      - run: pnpm build
+      - name: Pack the tested source
+        id: pack
+        run: |
+          set -euo pipefail
+          mkdir -p artifact
+          npm pack --ignore-scripts --pack-destination artifact
+          mv artifact/*.tgz artifact/package.tgz
+          echo "checksum=$(sha256sum artifact/package.tgz | cut -d ' ' -f 1)" >> "$GITHUB_OUTPUT"
+      - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
+        with:
+          name: npm-package
+          path: artifact/package.tgz
+          if-no-files-found: error
+          retention-days: 7
+
+  publish:
+    if: github.event_name == 'release' && !github.event.release.prerelease
+    needs: package
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    permissions:
+      packages: write
+    steps:
+      # No checkout, dependency install or lifecycle scripts with the write token.
+      - uses: actions/download-artifact@d3f86a106a0bac45b974a628896c90dbdf5c8093 # v4
+        with:
+          name: npm-package
+          path: artifact
+      - uses: actions/setup-node@249970729cb0ef3589644e2896645e5dc5ba9c38 # v6
+        with:
+          node-version: '24'
+          registry-url: https://npm.pkg.github.com
+          scope: '@morl99'
+      - name: Verify artifact checksum
+        env:
+          EXPECTED_SHA256: ${{ needs.package.outputs.checksum }}
+        run: |
+          set -euo pipefail
+          printf '%s  artifact/package.tgz\n' "$EXPECTED_SHA256" | sha256sum --check --strict
+      - name: Publish exact tested tarball
+        working-directory: artifact
+        run: npm publish ./package.tgz --ignore-scripts --registry=https://npm.pkg.github.com --tag=latest
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.GITHUB_TOKEN }}

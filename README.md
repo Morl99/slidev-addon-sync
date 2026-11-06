@@ -14,7 +14,7 @@ This fork targets Node.js 24 and Slidev 53. Install it in your presentation proj
 pnpm add github:Morl99/slidev-addon-sync
 ```
 
-The package name remains `slidev-addon-sync`. The [npm package](https://www.npmjs.com/package/slidev-addon-sync) belongs to the original project; installing it by name does not select this fork. For reproducible installations, use a specific Git commit in the GitHub dependency and commit your lockfile.
+The package name is `@morl99/slidev-addon-sync`. The [npm package](https://www.npmjs.com/package/slidev-addon-sync) belongs to the original project; installing it by name does not select this fork. For reproducible installations, use a specific Git commit in the GitHub dependency and commit your lockfile.
 
 ## Slidev Configuration
 
@@ -25,7 +25,7 @@ In your slides metadata (using Front Matter):
 ```yaml
 ---
 addons:
-  - slidev-addon-sync
+  - "@morl99/slidev-addon-sync"
 ---
 ```
 
@@ -34,7 +34,7 @@ Or in your `package.json`:
 ```json
 {
   "slidev": {
-    "addons": ["slidev-addon-sync"]
+    "addons": ["@morl99/slidev-addon-sync"]
   }
 }
 ```
@@ -225,3 +225,17 @@ Want to contribute or run the example from source? See [CONTRIBUTING.md](CONTRIB
 ## License
 
 [MIT](LICENCE). Original authorship and license notices are retained.
+
+## GitHub Packages
+
+After the first release is published, install this fork from GitHub’s npm registry.
+Map the scope in your presentation project’s `.npmrc`:
+
+```ini
+@morl99:registry=https://npm.pkg.github.com
+```
+
+Authenticate with a GitHub personal access token (classic) with `read:packages`
+using `npm login --scope=@morl99 --registry=https://npm.pkg.github.com --auth-type=legacy`,
+then run `pnpm add @morl99/slidev-addon-sync`. Do not commit tokens.
+GitHub requires authentication even for public npm packages.
