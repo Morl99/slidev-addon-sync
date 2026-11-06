@@ -13,10 +13,11 @@
   "scripts": {
     "dev": "slidev example.md --open",
     "build": "slidev build example.md",
-    "release:major": "changelog -M && git add CHANGELOG.md && git commit -m 'feat(docs): updated CHANGELOG.md' && npm version major && git push origin && git push origin --tags",
-    "release:minor": "changelog -m && git add CHANGELOG.md && git commit -m 'feat(docs): updated CHANGELOG.md' && npm version minor && git push origin && git push origin --tags",
-    "release:patch": "changelog -p && git add CHANGELOG.md && git commit -m 'feat(docs): updated CHANGELOG.md' && npm version patch && git push origin && git push origin --tags",
-    "preview": "vite preview"
+    "release:major": "changelog -M && git add CHANGELOG.md && git commit -m 'feat(docs): updated CHANGELOG.md' && pnpm version major && git push origin && git push origin --tags",
+    "release:minor": "changelog -m && git add CHANGELOG.md && git commit -m 'feat(docs): updated CHANGELOG.md' && pnpm version minor && git push origin && git push origin --tags",
+    "release:patch": "changelog -p && git add CHANGELOG.md && git commit -m 'feat(docs): updated CHANGELOG.md' && pnpm version patch && git push origin && git push origin --tags",
+    "preview": "vite preview",
+    "test": "vitest run"
   },
   "keywords": [
     "vuejs",
@@ -31,23 +32,24 @@
   },
   "license": "MIT",
   "engines": {
-    "node": ">=14.0.0",
-    "slidev": ">=0.50.0-beta.3"
+    "node": ">=24 <25",
+    "slidev": ">=53.1.0"
   },
   "peerDependencies": {
-    "@slidev/client": "^0.50.0-beta.3",
-    "vue": "^3.4.38"
+    "@slidev/client": "^53.1.0",
+    "vue": "^3.5.45"
   },
   "devDependencies": {
-    "@slidev/cli": "^0.50.0-beta.3",
-    "@slidev/theme-default": "latest",
-    "@types/uuid": "^10.0.0",
-    "generate-changelog": "^1.8.0"
+    "@slidev/cli": "^53.1.0",
+    "@slidev/theme-default": "^0.25.0",
+    "generate-changelog": "^1.8.0",
+    "vitest": "^5.1.0"
   },
   "dependencies": {
-    "@vueuse/core": "^11.0.3",
+    "@vueuse/core": "^15.0.0",
     "deep-object-diff": "^1.1.9",
     "hashids": "^2.3.0",
-    "uuid": "^10.0.0"
-  }
+    "uuid": "^14.0.3"
+  },
+  "packageManager": "pnpm@12.18.0"
 }
