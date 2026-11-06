@@ -49,7 +49,7 @@
   },
   "packageManager": "pnpm@12.18.0",
   "publishConfig": {
-    "registry": "https://registry.npmjs.org",
+    "registry": "https://registry.npmjs.org/",
     "access": "public"
   },
   "files": [

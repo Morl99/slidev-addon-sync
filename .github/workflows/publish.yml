@@ -37,6 +37,7 @@ jobs:
           pnpm --dir .github/release-tooling i --frozen-lockfile --ignore-scripts
           node --check .github/release-tooling/release.config.cjs
           node -e "require('./.github/release-tooling/release.config.cjs')"
+          node --test .github/release-tooling/registry.test.mjs
       - name: Pack the tested source
         id: pack
         run: |
