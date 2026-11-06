@@ -72,7 +72,7 @@ jobs:
           const pkg = JSON.parse(fs.readFileSync(path));
           assert.equal(pkg.name, '@morl99/slidev-addon-sync');
           pkg.version = process.env.RELEASE_VERSION;
-          pkg.publishConfig = {registry: 'https://registry.npmjs.org', access: 'public'};
+          pkg.publishConfig = {registry: 'https://registry.npmjs.org/', access: 'public'};
           fs.writeFileSync(path, JSON.stringify(pkg, null, 2) + '\n');
           JS
           npm pack ./staging/package --ignore-scripts --pack-destination artifact
