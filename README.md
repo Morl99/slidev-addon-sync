@@ -11,7 +11,7 @@ See below for more examples.
 ## Installation
 
 ```bash
-npm i slidev-addon-sync
+pnpm add slidev-addon-sync
 ```
 
 ## Slidev Configuration
@@ -205,4 +205,15 @@ syncStates:
   poll:
     init: false
 ---
+```
+
+## Development
+
+Use Node.js 24 and pnpm 12.18.0 (pinned in `packageManager`).
+
+```bash
+corepack enable
+pnpm install
+pnpm test
+pnpm build
 ```
