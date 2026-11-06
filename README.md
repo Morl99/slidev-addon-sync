@@ -1,26 +1,28 @@
 # slidev-addon-sync
 
-[![NPM version](https://img.shields.io/npm/v/slidev-addon-sync?color=3AB9D4&label=)](https://www.npmjs.com/package/slidev-addon-sync)
+Synchronize [Slidev](https://sli.dev/) presentations across browsers using Server-Sent Events (SSE) or WebSocket connections.
 
-Sync component for [Slidev](https://sli.dev/).
+This is an updated fork of [Smile-SA/slidev-addon-sync](https://github.com/Smile-SA/slidev-addon-sync). Many thanks to Tony Cabaye and the upstream contributors for creating the original project.
 
-This is compatible with the [slidev-sync-server](https://github.com/Smile-SA/slidev-sync-server) for the SSE or WebSocket server
-
-See below for more examples.
+Use it with [Morl99/slidev-sync-server](https://github.com/Morl99/slidev-sync-server). The presenter and viewers connect to the same server and group ID to share navigation and other configured state.
 
 ## Installation
 
+This fork targets Node.js 24 and Slidev 53. Install it in your presentation project directly from GitHub:
+
 ```bash
-pnpm add slidev-addon-sync
+pnpm add github:Morl99/slidev-addon-sync
 ```
+
+The package name remains `slidev-addon-sync`. The [npm package](https://www.npmjs.com/package/slidev-addon-sync) belongs to the original project; installing it by name does not select this fork. For reproducible installations, use a specific Git commit in the GitHub dependency and commit your lockfile.
 
 ## Slidev Configuration
 
-Define this package into your slidev addons.
+Register the addon in your presentation.
 
 In your slides metadata (using Front Matter):
 
-```
+```yaml
 ---
 addons:
   - slidev-addon-sync
@@ -43,9 +45,9 @@ Or in your `package.json`:
 
 You can use a Server Sent Events server or a WebSocket server to allow communication with multiple clients.
 
-You can use [slidev-sync-server](https://github.com/Smile-SA/slidev-sync-server) or create your own implementation.
+You can use [slidev-sync-server](https://github.com/Morl99/slidev-sync-server) or create your own implementation.
 
-In that case you need to use the `syncSettings` config in your markdown file Front Matter to set the server URL (Update the value of `server` using your own URL).
+Set `syncSettings.server` in the same front matter as `addons`. Use a server address reachable from every viewer’s browser. The URL selects the transport: `http(s)://` for SSE, `ws(s)://` for WebSocket. Configure the server for the matching mode; see its [README](https://github.com/Morl99/slidev-sync-server#quick-start).
 
 For HTTP Server Sent Events server:
 
@@ -69,7 +71,7 @@ Then, in the presentation, click on the connect icon.
 
 ![Connect control icon](./assets/control-icon.png)
 
-Type in a hash that you can share with other peoples and press <key>enter</key>. (you can use the proposed hash: everybody that are on the same presentation will have the same)
+Enter a shared group ID and press Enter. Use the same ID on the presenter and viewer devices. The suggested ID is derived from the presentation content; you can replace it to create a separate group.
 
 ![Connect control hash](./assets/control-hash.png)
 
@@ -101,7 +103,7 @@ syncSettings:
 
 By default this addon will only be visible and enabled in your static build.
 
-There should be no need to use in dev, because in that case the synchronization in handled by the dev server.
+Slidev already handles synchronization through its development server. To test this addon locally, explicitly enable it in development mode.
 
 If you still need to activate this addon in dev mode you can use:
 
@@ -125,12 +127,12 @@ Channels are internal slidev states created with `createSyncState` and by defaul
 * `shared`: state for navigation (pages and clicks) and cursor
 * `drawings`: drawing state
 
-If you want to synchronize only some channel then use:
+To configure channel defaults explicitly, use:
 
 ```yaml
 ---
 syncStates:
-  - drawings # This will only synchronize drawings
+  - drawings
 # Or alternatively:
 syncStates: ["drawings"]
 ---
@@ -159,7 +161,7 @@ syncStates:
 ---
 ```
 
-**Note:** don't forget in that case to list all channels you want to synchronize
+**Note:** this configures matching channels; it is not an allowlist. Channels not listed still use the default behavior (all keys, presenter-only updates and initial state).
 
 You can also use the alternative object syntax:
 
@@ -207,13 +209,19 @@ syncStates:
 ---
 ```
 
-## Development
+## Connection tips
 
-Use Node.js 24 and the pnpm version specified in `packageManager` in `package.json`.
+- By default, connect from a built presentation. For local testing, set `syncSettings.enabled: true` or `"dev"`.
+- `localhost` points to each viewer’s own device. Use a shared hostname when connecting from different devices.
+- For presentations served over HTTPS, use an HTTPS (SSE) or WSS (WebSocket) server URL.
+- Use the same server URL and group ID on every device, and send navigation updates from the presenter view.
+- A group ID identifies a synchronization session. Provide access control through your server deployment when needed.
 
-```bash
-corepack enable
-pnpm install
-pnpm test
-pnpm build
-```
+## Help and contributions
+
+Questions, bug reports and suggestions are welcome in [Issues](https://github.com/Morl99/slidev-addon-sync/issues).
+Want to contribute or run the example from source? See [CONTRIBUTING.md](CONTRIBUTING.md).
+
+## License
+
+[MIT](LICENCE). Original authorship and license notices are retained.
