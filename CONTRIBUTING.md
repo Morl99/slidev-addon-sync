@@ -129,28 +129,32 @@ publish. npm automatically adds provenance for Trusted Publishing releases.
 
 ### One-time npm setup
 
-The npm account must own the `morl99` scope. Before merging/enabling the workflow,
-publish the package once interactively, then configure its Trusted Publisher.
-Do not add an npm token to GitHub Secrets. Use a clean checkout of this PR and
-an npm CLI supporting Trusted Publishing. The installed npm CLI used by the
-release plugin is locked in `.github/release-tooling/pnpm-lock.yaml`.
+The npm account must own the `morl99` scope. The initial npm package must exist
+before its Trusted Publisher can be configured. You can bootstrap entirely from
+GitHub Actions:
 
-After `npm login`, prepare an isolated copy with the most recent release version:
+1. Create a short-lived npm granular access token with publish permission for
+   the `@morl99` scope and Bypass 2FA enabled. New packages must be allowed by the
+   token's scope permissions. Use the shortest available expiration.
+2. Store it as the repository Actions secret `NPM_BOOTSTRAP_TOKEN`. Never paste
+   tokens into issues, workflow inputs, logs or commits.
+3. Merge this workflow, then open Actions → Bootstrap npm package → Run workflow.
+   Select `main` and enter the existing GitHub release version without `v`.
+4. The workflow tests/builds current main, validates that the matching release tag
+   is an ancestor, and packs its source with that version. It does not create or
+   change Git tags or GitHub Releases. Only publication metadata is changed.
+5. After successful publication, immediately revoke the npm token and delete the
+   GitHub secret. The bootstrap job refuses to run once the npm package exists.
 
-```bash
-git fetch --tags origin
-release_version=$(git describe --tags --abbrev=0)
-bootstrap_dir=$(mktemp -d)
-npm pack --ignore-scripts --pack-destination "$bootstrap_dir"
-tar -xzf "$bootstrap_dir"/*.tgz -C "$bootstrap_dir"
-npm version "${release_version#v}" --prefix "$bootstrap_dir/package" --no-git-tag-version --ignore-scripts
-npm publish "$bootstrap_dir/package" --ignore-scripts --access public
-```
+PRs validate packaging but cannot publish. The isolated bootstrap publish job has
+no checkout, dependency installation or GitHub write permission; only the final
+publish step receives the npm token. It verifies the artifact checksum and
+requires an explicit npm registry HTTP 404 before attempting first publication.
 
-This publishes the existing release version to npm without changing Git tags or
-creating another GitHub Release. Complete npm's interactive authentication/2FA.
-Confirm that the scope belongs to your account; do not choose a different scope
-without updating package metadata and the addon installation examples.
+The regular Semantic Release workflow may fail on the initial merge because
+npm trust is not configured yet. That is expected: after bootstrapping and
+configuring trust below, re-run the regular workflow on `main` to publish the
+next version. No npm token is used in the regular workflow.
 
 In the npm package's Settings → Trusted Publisher, choose GitHub Actions:
 
