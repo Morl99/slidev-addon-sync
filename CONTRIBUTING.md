@@ -111,7 +111,7 @@ Releases use Semantic Release and Conventional Commits on `main`:
 
 Use a Conventional Commit title when squash-merging a pull request. Semantic
 Release computes the version from commits since the previous release, updates
-the staged package metadata, publishes to `npm.pkg.github.com`, and creates a
+the staged package metadata, publishes to `registry.npmjs.org`, and creates a
 `v` tag and GitHub Release with generated notes. Without a previous release tag,
 the first qualifying release starts at 1.0.0. Do not bump versions manually;
 `package.json` in Git remains a development placeholder. Version changes are
@@ -122,9 +122,52 @@ permissions. The separate release job verifies the SHA-256 of that artifact,
 unpacks it, and installs only dedicated, lockfile-pinned release tooling with
 lifecycle scripts disabled. It never installs application dependencies or runs
 application scripts. Semantic Release needs `contents: write` for tags/releases
-and `packages: write` for the registry. The short-lived token is exposed only to
-the release step. PR runs cannot publish. No publishing PAT is needed.
-The first package may need its visibility changed to public in package settings.
+and `id-token: write` for npm Trusted Publishing. The GitHub token is exposed
+only to the release step; npm authentication uses short-lived OIDC credentials.
+No npm token or GitHub Packages write permission is required. PR runs cannot
+publish. npm automatically adds provenance for Trusted Publishing releases.
+
+### One-time npm setup
+
+The npm account must own the `morl99` scope. Before merging/enabling the workflow,
+publish the package once interactively, then configure its Trusted Publisher.
+Do not add an npm token to GitHub Secrets. Use a clean checkout of this PR and
+an npm CLI supporting Trusted Publishing. The installed npm CLI used by the
+release plugin is locked in `.github/release-tooling/pnpm-lock.yaml`.
+
+After `npm login`, prepare an isolated copy with the most recent release version:
+
+```bash
+git fetch --tags origin
+release_version=$(git describe --tags --abbrev=0)
+bootstrap_dir=$(mktemp -d)
+npm pack --ignore-scripts --pack-destination "$bootstrap_dir"
+tar -xzf "$bootstrap_dir"/*.tgz -C "$bootstrap_dir"
+npm version "${release_version#v}" --prefix "$bootstrap_dir/package" --no-git-tag-version --ignore-scripts
+npm publish "$bootstrap_dir/package" --ignore-scripts --access public
+```
+
+This publishes the existing release version to npm without changing Git tags or
+creating another GitHub Release. Complete npm's interactive authentication/2FA.
+Confirm that the scope belongs to your account; do not choose a different scope
+without updating package metadata and the addon installation examples.
+
+In the npm package's Settings → Trusted Publisher, choose GitHub Actions:
+
+| Field | Value |
+| --- | --- |
+| Organization or user | `Morl99` |
+| Repository | `slidev-addon-sync` |
+| Workflow filename | `publish.yml` |
+| Environment | Leave empty (workflow does not use an environment) |
+
+Use GitHub-hosted runners. Complete the first automated publish within npm's
+Trusted Publisher activation window. The next qualifying commit on `main`
+continues versioning from the existing Git release tag. For manual retries,
+run `publish.yml` on `main`; already-released commits do not create a new version.
+See [npm Trusted Publishing](https://docs.npmjs.com/trusted-publishers/) for setup.
+
+### Dependency automation
 
 Dependabot checks application and release-tool npm dependencies and Actions
 weekly. Application dependency updates use `fix` commit titles to trigger a
