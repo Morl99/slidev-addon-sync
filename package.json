@@ -1,14 +1,14 @@
 {
-  "name": "slidev-addon-sync",
+  "name": "@morl99/slidev-addon-sync",
   "version": "0.1.0",
   "description": "Sync addon for Slidev",
-  "homepage": "https://github.com/Smile-SA/slidev-addon-sync",
+  "homepage": "https://github.com/Morl99/slidev-addon-sync",
   "repository": {
     "type": "git",
-    "url": "git@github.com:Smile-SA/slidev-addon-sync.git"
+    "url": "git+https://github.com/Morl99/slidev-addon-sync.git"
   },
   "bugs": {
-    "url": "https://github.com/Smile-SA/slidev-addon-sync/issues"
+    "url": "https://github.com/Morl99/slidev-addon-sync/issues"
   },
   "scripts": {
     "dev": "slidev example.md --open",
@@ -51,5 +51,16 @@
     "hashids": "^2.3.0",
     "uuid": "^14.0.3"
   },
-  "packageManager": "pnpm@12.18.0"
+  "packageManager": "pnpm@12.18.0",
+  "publishConfig": {
+    "registry": "https://npm.pkg.github.com"
+  },
+  "files": [
+    "components/",
+    "services/",
+    "types/",
+    "custom-nav-controls.vue",
+    "README.md",
+    "LICENCE"
+  ]
 }

@@ -103,4 +103,20 @@ this guide refer to that field so the version is maintained in one place.
 The `release:patch`, `release:minor` and `release:major` scripts generate a
 changelog, commit it, bump the package version and push commits and tags to
 `origin`. They are maintainer operations and do not publish a package to npm.
-There is currently no automated package publication workflow in this repository.
+Publish a stable GitHub Release with tag `v` followed by the package version
+(for example, `v0.1.0`) after merging the version change to `main`. The tag must
+point to a commit on `main` and match `package.json`. Prereleases are not published.
+The publication workflow tests, builds and packs an allowlisted source package
+with read-only permissions. A separate job verifies its SHA-256 and publishes the
+exact tarball to `npm.pkg.github.com` using the short-lived `GITHUB_TOKEN` with
+`packages: write`. It performs no checkout or dependency installation and disables
+lifecycle scripts. No personal publishing token is needed. Existing versions
+cannot be overwritten; bump the version for another release. The first package
+may need its visibility changed to public in GitHub package settings.
+
+Dependabot checks npm dependencies and Actions weekly. Patch/Minor updates may
+auto-merge; Major and unknown classifications remain manual. Enable repository
+auto-merge and protect `main` with the required `test` CI check before using the
+auto-merge workflow. The privileged metadata workflow never checks out PR code.
+Configure tag rules for `v*` to restrict tag creation and prevent tag changes.
+Restrict release creation to trusted maintainers.
