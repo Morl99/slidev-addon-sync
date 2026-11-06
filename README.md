@@ -8,13 +8,45 @@ Use it with [Morl99/slidev-sync-server](https://github.com/Morl99/slidev-sync-se
 
 ## Installation
 
-This fork targets Node.js 24 and Slidev 53. Install it in your presentation project directly from GitHub:
+Install the scoped package `@morl99/slidev-addon-sync` from [GitHub Packages](https://github.com/Morl99/slidev-addon-sync/packages). Check the supported Node.js and Slidev versions in [package.json](package.json).
+
+1. Add this scope mapping to your presentation project's `.npmrc`:
+
+   ```ini
+   @morl99:registry=https://npm.pkg.github.com
+   ```
+
+2. Authenticate using your GitHub username and a personal access token (classic) with `read:packages` as the password:
+
+   ```bash
+   npm login --scope=@morl99 --registry=https://npm.pkg.github.com --auth-type=legacy
+   ```
+
+3. Install the addon:
+
+   ```bash
+   pnpm add @morl99/slidev-addon-sync
+   ```
+
+GitHub requires authentication even for public npm packages. Keep tokens out of committed files and commit your dependency lockfile for reproducible installations.
+
+The unscoped [`slidev-addon-sync` package on npm](https://www.npmjs.com/package/slidev-addon-sync) belongs to the original project and does not install this fork.
+
+### Install from source
+
+To try the current source instead of a published release:
 
 ```bash
 pnpm add github:Morl99/slidev-addon-sync
 ```
 
-The package name is `@morl99/slidev-addon-sync`. The [npm package](https://www.npmjs.com/package/slidev-addon-sync) belongs to the original project; installing it by name does not select this fork. For reproducible installations, use a specific Git commit in the GitHub dependency and commit your lockfile.
+For a reproducible source dependency, append `#<commit-sha>` to the GitHub reference.
+
+## Releases
+
+Published versions and generated change notes are listed in [GitHub Releases](https://github.com/Morl99/slidev-addon-sync/releases). Semantic Release determines versions from Conventional Commits after successful checks on `main` and publishes the npm package, Git tag and GitHub Release automatically. Changes that do not require a release leave the published version unchanged.
+
+For development and release conventions, see [CONTRIBUTING.md](CONTRIBUTING.md#dependencies-and-releases).
 
 ## Slidev Configuration
 
@@ -226,16 +258,3 @@ Want to contribute or run the example from source? See [CONTRIBUTING.md](CONTRIB
 
 [MIT](LICENCE). Original authorship and license notices are retained.
 
-## GitHub Packages
-
-After the first release is published, install this fork from GitHub’s npm registry.
-Map the scope in your presentation project’s `.npmrc`:
-
-```ini
-@morl99:registry=https://npm.pkg.github.com
-```
-
-Authenticate with a GitHub personal access token (classic) with `read:packages`
-using `npm login --scope=@morl99 --registry=https://npm.pkg.github.com --auth-type=legacy`,
-then run `pnpm add @morl99/slidev-addon-sync`. Do not commit tokens.
-GitHub requires authentication even for public npm packages.
