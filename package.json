@@ -13,9 +13,6 @@
   "scripts": {
     "dev": "slidev example.md --open",
     "build": "slidev build example.md",
-    "release:major": "changelog -M && git add CHANGELOG.md && git commit -m 'feat(docs): updated CHANGELOG.md' && pnpm version major && git push origin && git push origin --tags",
-    "release:minor": "changelog -m && git add CHANGELOG.md && git commit -m 'feat(docs): updated CHANGELOG.md' && pnpm version minor && git push origin && git push origin --tags",
-    "release:patch": "changelog -p && git add CHANGELOG.md && git commit -m 'feat(docs): updated CHANGELOG.md' && pnpm version patch && git push origin && git push origin --tags",
     "preview": "vite preview",
     "test": "vitest run"
   },
@@ -42,7 +39,6 @@
   "devDependencies": {
     "@slidev/cli": "^53.1.0",
     "@slidev/theme-default": "^0.25.0",
-    "generate-changelog": "^1.8.0",
     "vitest": "^5.1.0"
   },
   "dependencies": {
