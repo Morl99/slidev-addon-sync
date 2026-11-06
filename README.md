@@ -8,27 +8,20 @@ Use it with [Morl99/slidev-sync-server](https://github.com/Morl99/slidev-sync-se
 
 ## Installation
 
-Install the scoped package `@morl99/slidev-addon-sync` from [GitHub Packages](https://github.com/Morl99/slidev-addon-sync/packages). Check the supported Node.js and Slidev versions in [package.json](package.json).
+Install the public package from [npm](https://www.npmjs.com/package/@morl99/slidev-addon-sync):
 
-1. Add this scope mapping to your presentation project's `.npmrc`:
+```bash
+pnpm add @morl99/slidev-addon-sync
+```
 
-   ```ini
-   @morl99:registry=https://npm.pkg.github.com
-   ```
+No login or custom registry configuration is required. Check the supported
+Node.js and Slidev versions in [package.json](package.json) and commit your
+lockfile for reproducible installations.
 
-2. Authenticate using your GitHub username and a personal access token (classic) with `read:packages` as the password:
-
-   ```bash
-   npm login --scope=@morl99 --registry=https://npm.pkg.github.com --auth-type=legacy
-   ```
-
-3. Install the addon:
-
-   ```bash
-   pnpm add @morl99/slidev-addon-sync
-   ```
-
-GitHub requires authentication even for public npm packages. Keep tokens out of committed files and commit your dependency lockfile for reproducible installations.
+If you previously configured GitHub Packages, remove
+`@morl99:registry=https://npm.pkg.github.com` from your project or user `.npmrc`.
+The same package name is now resolved from npmjs.org. When migrating an existing
+installation, update the dependency lockfile so it no longer points to GitHub Packages.
 
 The unscoped [`slidev-addon-sync` package on npm](https://www.npmjs.com/package/slidev-addon-sync) belongs to the original project and does not install this fork.
 
@@ -44,7 +37,7 @@ For a reproducible source dependency, append `#<commit-sha>` to the GitHub refer
 
 ## Releases
 
-Published versions and generated change notes are listed in [GitHub Releases](https://github.com/Morl99/slidev-addon-sync/releases). Semantic Release determines versions from Conventional Commits after successful checks on `main` and publishes the npm package, Git tag and GitHub Release automatically. Changes that do not require a release leave the published version unchanged.
+Published versions and generated change notes are listed in [GitHub Releases](https://github.com/Morl99/slidev-addon-sync/releases). Semantic Release determines versions from Conventional Commits after successful checks on `main` and publishes the public npm package, Git tag and GitHub Release automatically. Changes that do not require a release leave the published version unchanged.
 
 For development and release conventions, see [CONTRIBUTING.md](CONTRIBUTING.md#dependencies-and-releases).
 
