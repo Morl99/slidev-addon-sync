@@ -209,7 +209,7 @@ syncStates:
 
 ## Development
 
-Use Node.js 24 and pnpm 12.18.0 (pinned in `packageManager`).
+Use Node.js 24 and the pnpm version specified in `packageManager` in `package.json`.
 
 ```bash
 corepack enable
