@@ -14,6 +14,20 @@ Install the public package from [npm](https://www.npmjs.com/package/@morl99/slid
 pnpm add @morl99/slidev-addon-sync
 ```
 
+Or use npm, Yarn or Bun:
+
+```bash
+npm install @morl99/slidev-addon-sync
+```
+
+```bash
+yarn add @morl99/slidev-addon-sync
+```
+
+```bash
+bun add @morl99/slidev-addon-sync
+```
+
 No login or custom registry configuration is required. Check the supported
 Node.js and Slidev versions in [package.json](package.json) and commit your
 lockfile for reproducible installations.
