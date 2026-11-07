@@ -127,36 +127,9 @@ only to the release step; npm authentication uses short-lived OIDC credentials.
 No npm token or GitHub Packages write permission is required. PR runs cannot
 publish. npm automatically adds provenance for Trusted Publishing releases.
 
-### One-time npm setup
+### npm Trusted Publishing
 
-The npm account must own the `morl99` scope. The initial npm package must exist
-before its Trusted Publisher can be configured. You can bootstrap entirely from
-GitHub Actions:
-
-1. Create a short-lived npm granular access token with publish permission for
-   the `@morl99` scope and Bypass 2FA enabled. New packages must be allowed by the
-   token's scope permissions. Use the shortest available expiration.
-2. Store it as the repository Actions secret `NPM_BOOTSTRAP_TOKEN`. Never paste
-   tokens into issues, workflow inputs, logs or commits.
-3. Merge this workflow, then open Actions → Bootstrap npm package → Run workflow.
-   Select `main` and enter the existing GitHub release version without `v`.
-4. The workflow tests/builds current main, validates that the matching release tag
-   is an ancestor, and packs its source with that version. It does not create or
-   change Git tags or GitHub Releases. Only publication metadata is changed.
-5. After successful publication, immediately revoke the npm token and delete the
-   GitHub secret. The bootstrap job refuses to run once the npm package exists.
-
-PRs validate packaging but cannot publish. The isolated bootstrap publish job has
-no checkout, dependency installation or GitHub write permission; only the final
-publish step receives the npm token. It verifies the artifact checksum and
-requires an explicit npm registry HTTP 404 before attempting first publication.
-
-The regular Semantic Release workflow may fail on the initial merge because
-npm trust is not configured yet. That is expected: after bootstrapping and
-configuring trust below, re-run the regular workflow on `main` to publish the
-next version. No npm token is used in the regular workflow.
-
-In the npm package's Settings → Trusted Publisher, choose GitHub Actions:
+The npm package uses GitHub Actions as its Trusted Publisher with these settings:
 
 | Field | Value |
 | --- | --- |
@@ -165,9 +138,8 @@ In the npm package's Settings → Trusted Publisher, choose GitHub Actions:
 | Workflow filename | `publish.yml` |
 | Environment | Leave empty (workflow does not use an environment) |
 
-Use GitHub-hosted runners. Complete the first automated publish within npm's
-Trusted Publisher activation window. The next qualifying commit on `main`
-continues versioning from the existing Git release tag. For manual retries,
+Use GitHub-hosted runners. The next qualifying commit on `main` continues
+versioning from the existing Git release tag. For manual retries,
 run `publish.yml` on `main`; already-released commits do not create a new version.
 See [npm Trusted Publishing](https://docs.npmjs.com/trusted-publishers/) for setup.
 
