@@ -18,11 +18,6 @@ No login or custom registry configuration is required. Check the supported
 Node.js and Slidev versions in [package.json](package.json) and commit your
 lockfile for reproducible installations.
 
-If you previously configured GitHub Packages, remove
-`@morl99:registry=https://npm.pkg.github.com` from your project or user `.npmrc`.
-The same package name is now resolved from npmjs.org. When migrating an existing
-installation, update the dependency lockfile so it no longer points to GitHub Packages.
-
 The unscoped [`slidev-addon-sync` package on npm](https://www.npmjs.com/package/slidev-addon-sync) belongs to the original project and does not install this fork.
 
 ### Install from source
