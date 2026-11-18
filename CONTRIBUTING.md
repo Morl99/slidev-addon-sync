@@ -89,10 +89,11 @@ Create a branch, keep the change focused and explain the problem it solves.
 Include reproduction steps or test results when relevant, and update the docs
 when behavior changes.
 
-The CI workflow runs on pull requests, pushes to `main` and manual dispatches.
-It uses Node.js 24, installs with `pnpm i --frozen-lockfile`, runs the tests and
-builds the example. The `test` job should pass before merging. Actions are pinned
-to commit SHAs and the workflow uses read-only repository permissions.
+The `publish.yml` workflow runs on pull requests, pushes to `main` and manual
+dispatches. Its read-only `test` job uses Node.js 24, installs with
+`pnpm i --frozen-lockfile`, runs the tests, builds the example and validates the
+release tooling and package. GitHub requires the `test` check before merging.
+Actions are pinned to commit SHAs.
 
 ## Dependencies and releases
 
@@ -117,10 +118,10 @@ the first qualifying release starts at 1.0.0. Do not bump versions manually;
 `package.json` in Git remains a development placeholder. Version changes are
 applied only to the staged package; no generated version commit is pushed.
 
-The workflow tests, builds and packs an allowlisted source package with read-only
-permissions. The separate release job verifies the SHA-256 of that artifact,
-unpacks it, and installs only dedicated, lockfile-pinned release tooling with
-lifecycle scripts disabled. It never installs application dependencies or runs
+The `test` job packs an allowlisted source package. Pushes to `main` and manual
+runs on `main` upload it as an artifact. The separate release job verifies the
+artifact's SHA-256, unpacks it, and installs only dedicated, lockfile-pinned
+release tooling with lifecycle scripts disabled. It never installs application dependencies or runs
 application scripts. Semantic Release needs `contents: write` for tags/releases
 and `id-token: write` for npm Trusted Publishing. The GitHub token is exposed
 only to the release step; npm authentication uses short-lived OIDC credentials.
