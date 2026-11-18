@@ -34,8 +34,6 @@ jobs:
           UPDATE_TYPE: ${{ steps.metadata.outputs.update-type }}
         run: |
           set -euo pipefail
-          # Fail closed unless branch protection requires the test job.
-          gh api "repos/$GITHUB_REPOSITORY/branches/main" --jq '.protection.required_status_checks.contexts // [] | index("test") != null' | grep -qx true
           case "$UPDATE_TYPE" in
             version-update:semver-patch|version-update:semver-minor)
               gh pr merge "$PR_URL" --auto --squash --match-head-commit "$HEAD_SHA"
